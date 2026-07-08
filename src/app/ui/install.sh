@@ -4,3 +4,6 @@ cd $SCRIPT_DIR
 
 . $HOME/compute/shared_compute.sh
 install_ngnix
+
+sudo sed -i '/^[[:space:]]*location \/ {$/s/^/# /; /^[[:space:]]*}$/s/^/# /' /etc/nginx/nginx.conf
+sudo systemctl restart nginx
