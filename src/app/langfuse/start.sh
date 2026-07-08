@@ -6,4 +6,7 @@ export PATH=~/.local/bin/:$PATH
 . $HOME/compute/tf_env.sh
 
 cd langfuse
+
+# podman-compose is a python program
+source myenv/bin/activate
 podman-compose up 2>&1 | tee ../langfuse.log
