@@ -110,6 +110,7 @@ Type=simple
 ExecStart=/home/opc/app/$APP_DIR/start.sh
 TimeoutStartSec=0
 User=opc
+Environment=XDG_RUNTIME_DIR=/run/user/1000
 
 [Install]
 WantedBy=default.target
