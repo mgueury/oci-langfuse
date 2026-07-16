@@ -10,9 +10,13 @@ export ARCH=`rpm --eval '%{_arch}'`
 echo "ARCH=$ARCH"
 
 # Wait that the machine is ready
-date
-sudo cloud-init status --wait
-date
+for i in {1..6}; do
+    if dnf makecache; then
+        break
+    fi
+    echo "Waiting for yum repositories..."
+    sleep 10
+done
 
 # Shared Install Function
 . ./shared_compute.sh
