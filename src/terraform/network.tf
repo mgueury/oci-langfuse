@@ -350,13 +350,13 @@ data "oci_core_vcn" "starter_vcn" {
   vcn_id = (var.vcn_ocid == null) ? oci_core_vcn.starter_vcn[0].id : var.vcn_ocid
 }
 data "oci_core_subnet" "starter_web_subnet" {
-  subnet_id = (var.starter_web_subnet == null) ? oci_core_vcn.starter_web_subnet[0].id : var.starter_web_subnet
+  subnet_id = (var.starter_web_subnet == null) ? oci_core_subnet.starter_web_subnet[0].id : var.starter_web_subnet
 }
 
 data "oci_core_subnet" "starter_app_subnet" {
-  subnet_id = (var.starter_app_subnet == null) ? oci_core_vcn.starter_app_subnet[0].id : var.starter_app_subnet
+  subnet_id = (var.starter_app_subnet == null) ? oci_core_subnet.starter_app_subnet[0].id : var.starter_app_subnet
 } 
 
 data "oci_core_subnet" "starter_db_subnet" {
-  subnet_id = (var.starter_db_subnet == null) ? oci_core_vcn.starter_app_subnet[0].id : var.starter_db_subnet
+  subnet_id = (var.starter_db_subnet == null) ? oci_core_subnet.starter_db_subnet[0].id : var.starter_db_subnet
 } 
