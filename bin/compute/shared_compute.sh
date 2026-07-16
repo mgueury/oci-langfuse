@@ -72,10 +72,12 @@ export -f exit_on_error
 # -- dnf_makecache ----------------------------------------------------------
 dnf_makecache() {
     # Wait that the machine is ready
+    title "dnf makecache"
     success=0
     for i in {1..10}; do
         if sudo dnf -q makecache; then
             success=1
+            echo "DNF MakeCache: Success"
             break
         fi
         echo "Waiting 10 secs for yum repositories... ($i/10)"
