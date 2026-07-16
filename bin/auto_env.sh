@@ -344,6 +344,7 @@ if [ -f $STATE_FILE ]; then
     fi
 
     # Check if there is a BASTION SERVICE with a BASTION COMMAND
+    export COMPUTE_PRIVATE_IP=$COMPUTE_IP
     if [ "$BASTION_COMMAND" == "" ]; then
         if [ "$TF_VAR_deploy_type" == "public_compute" ]; then
             # Ideally BASTION_PROXY_COMMAND should be not used. But passing a empty value does not work...
