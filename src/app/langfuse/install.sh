@@ -22,6 +22,6 @@ sudo firewall-cmd --reload
 sudo sysctl vm.overcommit_memory=1
 
 # Warmup to pre-create all volumes first. It avoids error at startup
-# cd langfuse
-# podman compose up --no-start
-# cd -
+cd langfuse
+podman compose up --no-start
+cd -
