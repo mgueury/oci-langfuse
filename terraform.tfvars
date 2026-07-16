@@ -14,7 +14,6 @@ compartment_ocid="__TO_FILL__"
 # LangFuse Init
 # See src/app/langfuse/start.sh
 #     https://langfuse.com/self-hosting/administration/headless-initialization
-
 langfuse_init_user_email="admin@example.com"
 langfuse_init_user_password="changeit"
 langfuse_init_project_public_key="pk-lf-change-it"
