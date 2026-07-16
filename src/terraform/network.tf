@@ -3,41 +3,10 @@ variable "public_ip_filter" {
   description = "IP Range that can access the public network"
   default = "0.0.0.0/0"  
 }
-/* 
-# To use a existing Landing Zone, add these variables in env.sh
-#
-# Landing Zone
-# export TF_VAR_lz_app_cmp_ocid=$TF_VAR_compartment_ocid')
-# export TF_VAR_lz_db_cmp_ocid=$TF_VAR_compartment_ocid')
-# export TF_VAR_lz_network_cmp_ocid=$TF_VAR_compartment_ocid')
-# export TF_VAR_lz_security_cmp_ocid=$TF_VAR_compartment_ocid')
-# export TF_VAR_lz_vcn_ocid="XXXX"')
-# export TF_VAR_lz_web_subnet_ocid="XXXX"')
-# export TF_VAR_lz_app_subnet_ocid="XXXX"')
-# export TF_VAR_lz_db_subnet_ocid="XXXX"')
-#
-# Existing VCN and Subnets
-# variable "vcn_ocid" {}
-# variable "web_subnet_ocid" {}
-# variable "app_subnet_ocid" {}
-# variable "db_subnet_ocid" {}
-
-data "oci_core_vcn" "starter_vcn" {
-  vcn_id = var.vcn_ocid
-}
-
-data "oci_core_subnet" "starter_web_subnet" {
-  subnet_id = var.web_subnet_ocid
-}
-
-data "oci_core_subnet" "starter_app_subnet" {
-  subnet_id = var.app_subnet_ocid
-}
-
-data "oci_core_subnet" "starter_db_subnet" {
-  subnet_id = var.db_subnet_ocid
-}
-*/
+variable "vcn_ocid" {}
+variable "web_subnet_ocid" {}
+variable "app_subnet_ocid" {}
+variable "db_subnet_ocid" {}
 
 # New VCN and Subnets
 locals {
@@ -48,6 +17,8 @@ locals {
 }
 
 resource "oci_core_vcn" "starter_vcn" {
+   count = var.vcn_ocid == null ? 1 : 0
+
   cidr_block     = local.cidr_vcn
   compartment_id = local.lz_network_cmp_ocid
   display_name   = "${var.prefix}-vcn"
@@ -55,69 +26,85 @@ resource "oci_core_vcn" "starter_vcn" {
   freeform_tags  = local.freeform_tags
 }
 
+data "oci_core_vcn" "starter_vcn" {
+  vcn_id = (var.vcn_ocid == null) ? oci_core_vcn.starter_vcn[0].id : var.vcn_ocid
+}
+
 resource "oci_core_internet_gateway" "starter_internet_gateway" {
+  count = var.vcn_ocid == null ? 1 : 0
+
   compartment_id = local.lz_network_cmp_ocid
   display_name   = "${var.prefix}-internet-gateway"
-  vcn_id         = oci_core_vcn.starter_vcn.id
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
   freeform_tags  = local.freeform_tags
 }
 
 resource "oci_core_default_route_table" "default_route_table" {
-  manage_default_resource_id = oci_core_vcn.starter_vcn.default_route_table_id
+  count = var.vcn_ocid == null ? 1 : 0
+
+  manage_default_resource_id = data.oci_core_vcn.starter_vcn.default_route_table_id
   display_name               = "DefaultRouteTable"
 
   route_rules {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.starter_internet_gateway.id
+    network_entity_id = oci_core_internet_gateway.starter_internet_gateway[0].id
   }
   freeform_tags = local.freeform_tags
 }
 
 # Public Subnet
 resource "oci_core_subnet" "starter_web_subnet" {
+  count = var.vcn_ocid == null ? 1 : 0
+
   cidr_block        = local.cidr_web_subnet
   display_name      = "${var.prefix}-web-subnet"
   dns_label         = "${var.prefix}web"
-  security_list_ids = [oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list[0].id]
   compartment_id    = local.lz_network_cmp_ocid
-  vcn_id            = oci_core_vcn.starter_vcn.id
-  route_table_id    = oci_core_vcn.starter_vcn.default_route_table_id
-  dhcp_options_id   = oci_core_vcn.starter_vcn.default_dhcp_options_id
+  vcn_id            = data.oci_core_vcn.starter_vcn.id
+  route_table_id    = data.oci_core_vcn.starter_vcn.default_route_table_id
+  dhcp_options_id   = data.oci_core_vcn.starter_vcn.default_dhcp_options_id
   freeform_tags     = local.freeform_tags
 }
 
 # App Subnet
 resource "oci_core_subnet" "starter_app_subnet" {
+  count = var.vcn_ocid == null ? 1 : 0
+
   cidr_block        = local.cidr_app_subnet
   display_name      = "${var.prefix}-app-subnet"
   dns_label         = "${var.prefix}app"
-  security_list_ids = [oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  security_list_ids = data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list[0].id]
   compartment_id    = local.lz_network_cmp_ocid
-  vcn_id            = oci_core_vcn.starter_vcn.id
-  route_table_id    = oci_core_route_table.starter_route_private.id
-  dhcp_options_id   = oci_core_vcn.starter_vcn.default_dhcp_options_id
+  vcn_id            = data.oci_core_vcn.starter_vcn.id
+  route_table_id    = oci_core_route_table.starter_route_private[0].id
+  dhcp_options_id   = data.oci_core_vcn.starter_vcn.default_dhcp_options_id
   freeform_tags     = local.freeform_tags
   prohibit_public_ip_on_vnic = true
 }
 
 # DB Subnet
 resource "oci_core_subnet" "starter_db_subnet" {
+  count = var.vcn_ocid == null ? 1 : 0
+
   cidr_block        = local.cidr_db_subnet
   display_name      = "${var.prefix}-db-subnet"
   dns_label         = "${var.prefix}db"
-  security_list_ids = [oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list.id]
+  security_list_ids = [data.oci_core_vcn.starter_vcn.default_security_list_id, oci_core_security_list.starter_security_list[0].id]
   compartment_id    = local.lz_network_cmp_ocid
-  vcn_id            = oci_core_vcn.starter_vcn.id
-  route_table_id    = oci_core_route_table.starter_route_private.id
-  dhcp_options_id   = oci_core_vcn.starter_vcn.default_dhcp_options_id
+  vcn_id            = data.oci_core_vcn.starter_vcn.id
+  route_table_id    = oci_core_route_table.starter_route_private[0].id
+  dhcp_options_id   = data.oci_core_vcn.starter_vcn.default_dhcp_options_id
   freeform_tags     = local.freeform_tags
   prohibit_public_ip_on_vnic = true
 }
 
 resource "oci_core_security_list" "starter_security_list" {
+  count = var.vcn_ocid == null ? 1 : 0
+
   compartment_id = local.lz_network_cmp_ocid
-  vcn_id         = oci_core_vcn.starter_vcn.id
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-security-list"
 
   ingress_security_rules {
@@ -310,38 +297,25 @@ resource "oci_core_security_list" "starter_security_list" {
   freeform_tags = local.freeform_tags
 }
 
-# Compatibility with network_existing.tf
-data "oci_core_vcn" "starter_vcn" {
-  vcn_id = oci_core_vcn.starter_vcn.id
-}
-
-data "oci_core_subnet" "starter_web_subnet" {
-  subnet_id = oci_core_subnet.starter_web_subnet.id
-}
-
-data "oci_core_subnet" "starter_app_subnet" {
-  subnet_id = oci_core_subnet.starter_app_subnet.id
-} 
-
-data "oci_core_subnet" "starter_db_subnet" {
-  subnet_id = oci_core_subnet.starter_db_subnet.id
-} 
-
 # NAT Gateway
 resource "oci_core_nat_gateway" "starter_nat_gateway" {
+  count = var.vcn_ocid == null ? 1 : 0
+
   compartment_id = local.lz_network_cmp_ocid
-  vcn_id         = oci_core_vcn.starter_vcn.id
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-nat-gateway"
   freeform_tags  = local.freeform_tags
 }
 
 # Service Gateway
 resource "oci_core_service_gateway" "starter_service_gateway" {
+  count = var.vcn_ocid == null ? 1 : 0
+
   compartment_id = local.lz_network_cmp_ocid
   services {
     service_id = data.oci_core_services.all_services.services[0]["id"]
   }
-  vcn_id         = oci_core_vcn.starter_vcn.id
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
 
   display_name   = "${var.prefix}-service-gateway"
   freeform_tags  = local.freeform_tags
@@ -349,18 +323,37 @@ resource "oci_core_service_gateway" "starter_service_gateway" {
 
 # Route Private Subnet
 resource "oci_core_route_table" "starter_route_private" {
+  count = var.vcn_ocid == null ? 1 : 0
+
   compartment_id = local.lz_network_cmp_ocid
-  vcn_id         = oci_core_vcn.starter_vcn.id
+  vcn_id         = data.oci_core_vcn.starter_vcn.id
   display_name   = "${var.prefix}-route-private"
 
   route_rules {
     destination       = data.oci_core_services.all_services.services[0]["cidr_block"]
     destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.starter_service_gateway.id
+    network_entity_id = oci_core_service_gateway.starter_service_gateway[0].id
   }  
   route_rules {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.starter_nat_gateway.id
+    network_entity_id = oci_core_nat_gateway.starter_nat_gateway[0].id
   }
 }
+
+# Works for both new and existing network
+data "oci_core_vcn" "starter_vcn" {
+  vcn_id = (var.vcn_ocid == null) ? oci_core_vcn.starter_vcn[0].id : var.vcn_ocid
+}
+
+data "oci_core_subnet" "starter_web_subnet" {
+  subnet_id = (var.starter_web_subnet == null) ? oci_core_vcn.starter_web_subnet.id : var.starter_web_subnet
+}
+
+data "oci_core_subnet" "starter_app_subnet" {
+  subnet_id = (var.starter_app_subnet == null) ? oci_core_vcn.starter_app_subnet.id : var.starter_app_subnet
+} 
+
+data "oci_core_subnet" "starter_db_subnet" {
+  subnet_id = (var.starter_db_subnet == null) ? oci_core_vcn.starter_app_subnet.id : var.starter_db_subnet
+} 
