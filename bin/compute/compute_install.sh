@@ -9,6 +9,11 @@ cd $SCRIPT_DIR
 export ARCH=`rpm --eval '%{_arch}'`
 echo "ARCH=$ARCH"
 
+# Wait that the machine is ready
+date
+sudo cloud-init status --wait
+date
+
 # Shared Install Function
 . ./shared_compute.sh
 title "Compute Install"
