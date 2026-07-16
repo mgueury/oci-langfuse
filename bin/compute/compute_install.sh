@@ -9,18 +9,10 @@ cd $SCRIPT_DIR
 export ARCH=`rpm --eval '%{_arch}'`
 echo "ARCH=$ARCH"
 
-# Wait that the machine is ready
-for i in {1..6}; do
-    if dnf makecache; then
-        break
-    fi
-    echo "Waiting for yum repositories..."
-    sleep 10
-done
-
 # Shared Install Function
 . ./shared_compute.sh
 title "Compute Install"
+dnf_makecache
 
 if ! grep -q "export LC_CTYPE" $HOME/.bashrc; then
     # Set VI and NANO in utf8
