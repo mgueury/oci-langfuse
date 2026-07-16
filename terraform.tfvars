@@ -3,6 +3,10 @@
 # Prefix to all resources created by terraform
 prefix="langfuse"
 
+# Shape
+instance_ocpus=2
+instance_shape_config_memory_in_gbs=16
+
 # IP Range that can access port like 80/443 on the internet. Typically:
 #   - All internet - 0.0.0.0/0
 #   - or <your_laptop_ip>/32. Get your Laptop IP, by example, using https://whatismyipaddress.com
