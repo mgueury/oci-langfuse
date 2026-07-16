@@ -17,3 +17,7 @@ python -m pip install --user podman-compose
 # Firewall 
 sudo firewall-cmd --zone=public --add-port=3000/tcp --permanent
 
+# Warmup to pre-create all volumes first. It avoids error at startup
+cd langfuse
+podman compose up --no-start
+cd -
