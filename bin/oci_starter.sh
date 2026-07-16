@@ -207,8 +207,8 @@ elif [ "$ARG1" == "env" ]; then
 elif [ "$ARG1" == "upgrade" ]; then
     $BIN_DIR/upgrade.sh 
 elif [ "$ARG1" == "network" ]; then
-    . ./starter.sh env -silent
-    echo "test"
+    . ./starter.sh env
+    title "Network OCID"
     get_id_from_tfstate "vcn_ocid" "starter_vcn"
     get_id_from_tfstate "web_subnet_ocid" "starter_web_subnet" 
     get_id_from_tfstate "app_subnet_ocid" "starter_app_subnet" 
