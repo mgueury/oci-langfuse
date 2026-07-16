@@ -349,14 +349,16 @@ resource "oci_core_route_table" "starter_route_private" {
 data "oci_core_vcn" "starter_vcn" {
   vcn_id = (var.vcn_ocid == null) ? oci_core_vcn.starter_vcn[0].id : var.vcn_ocid
 }
+
 data "oci_core_subnet" "starter_web_subnet" {
-  subnet_id = (var.starter_web_subnet == null) ? oci_core_subnet.starter_web_subnet[0].id : var.starter_web_subnet
+  subnet_id = var.web_subnet_ocid == null ? oci_core_subnet.starter_web_subnet[0].id : var.web_subnet_ocid
 }
 
 data "oci_core_subnet" "starter_app_subnet" {
-  subnet_id = (var.starter_app_subnet == null) ? oci_core_subnet.starter_app_subnet[0].id : var.starter_app_subnet
-} 
+  subnet_id = var.app_subnet_ocid == null ? oci_core_subnet.starter_app_subnet[0].id : var.app_subnet_ocid
+}
 
 data "oci_core_subnet" "starter_db_subnet" {
-  subnet_id = (var.starter_db_subnet == null) ? oci_core_subnet.starter_db_subnet[0].id : var.starter_db_subnet
-} 
+  subnet_id = var.db_subnet_ocid == null ? oci_core_subnet.starter_db_subnet[0].id : var.db_subnet_ocid
+}
+
