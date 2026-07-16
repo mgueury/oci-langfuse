@@ -75,7 +75,7 @@ dnf_makecache() {
     title "dnf makecache"
     success=0
     for i in {1..10}; do
-        if sudo dnf -q makecache; then
+        if sudo dnf makecache; then
             success=1
             echo "DNF MakeCache: Success"
             break
