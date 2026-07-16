@@ -1,4 +1,4 @@
-if grep -q 'STREAM_OCID' $TARGET_DIR/tf_env.sh; then
+if grep -q 'TF_VAR_langfuse_init_user_email' $TARGET_DIR/tf_env.sh; then
     echo "tf_env.sh already modified"
 else 
     ## Set env variables needed for env.sh
