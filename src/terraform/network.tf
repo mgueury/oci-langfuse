@@ -26,10 +26,6 @@ resource "oci_core_vcn" "starter_vcn" {
   freeform_tags  = local.freeform_tags
 }
 
-data "oci_core_vcn" "starter_vcn" {
-  vcn_id = (var.vcn_ocid == null) ? oci_core_vcn.starter_vcn[0].id : var.vcn_ocid
-}
-
 resource "oci_core_internet_gateway" "starter_internet_gateway" {
   count = var.vcn_ocid == null ? 1 : 0
 
@@ -345,7 +341,6 @@ resource "oci_core_route_table" "starter_route_private" {
 data "oci_core_vcn" "starter_vcn" {
   vcn_id = (var.vcn_ocid == null) ? oci_core_vcn.starter_vcn[0].id : var.vcn_ocid
 }
-
 data "oci_core_subnet" "starter_web_subnet" {
   subnet_id = (var.starter_web_subnet == null) ? oci_core_vcn.starter_web_subnet.id : var.starter_web_subnet
 }
