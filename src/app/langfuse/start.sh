@@ -24,5 +24,5 @@ export LANGFUSE_INIT_ORG_ID="org"
 export LANGFUSE_INIT_PROJECT_ID="project"
 
 cd langfuse
-# podman-compose up 2>&1 | tee ../langfuse.log
-podman-compose up
+podman-compose up 2>&1 | tee ../langfuse.log
+# podman-compose up
