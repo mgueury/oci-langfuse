@@ -3,10 +3,18 @@ variable "public_ip_filter" {
   description = "IP Range that can access the public network"
   default = "0.0.0.0/0"  
 }
-variable "vcn_ocid" {}
-variable "web_subnet_ocid" {}
-variable "app_subnet_ocid" {}
-variable "db_subnet_ocid" {}
+
+# To use a existing VCN, add these variables in terraform.tfvars
+#
+# vcn_ocid="XXXX"
+# web_subnet_ocid="XXXX"
+# app_subnet_ocid="XXXX"
+# db_subnet_ocid="XXXX"
+
+variable "vcn_ocid" { default=null }
+variable "web_subnet_ocid" { default=null }
+variable "app_subnet_ocid" {default=null }
+variable "db_subnet_ocid" { default=null }
 
 # New VCN and Subnets
 locals {
