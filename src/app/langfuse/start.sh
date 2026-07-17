@@ -5,9 +5,6 @@ export PATH=~/.local/bin/:$PATH
 
 . /home/opc/compute/tf_env.sh
 
-# podman-compose is a python program
-source myenv/bin/activate
-
 # Avoid: ClickHouse query failed with non-retryable error: getaddrinfo ENOTFOUND clickhouse
 export CLICKHOUSE_CLUSTER_ENABLED=false
 
@@ -24,5 +21,4 @@ export LANGFUSE_INIT_ORG_ID="org"
 export LANGFUSE_INIT_PROJECT_ID="project"
 
 cd langfuse
-podman-compose up 2>&1 | tee ../langfuse.log
-# podman-compose up
+docker compose up 2>&1 | tee ../langfuse.log
