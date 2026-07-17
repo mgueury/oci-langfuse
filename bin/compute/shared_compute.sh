@@ -491,6 +491,18 @@ install_cline_cli() {
 }
 export -f install_cline_cli 
 
+# -- Install Docker-CE ------------------------------------------------------
+
+install_docker_ce() {
+    # Docker-CE
+    sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+    sudo dnf install -y docker-ce
+    sudo usermod -aG docker opc
+    sudo systemctl enable docker
+    sudo systemctl start docker
+}
+export -f install_docker_ce
+
 # -- Install Docker tools ---------------------------------------------------
 
 install_docker_tools() {
