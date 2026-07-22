@@ -1,5 +1,8 @@
-## OCI-Starter
+## OCI Starter - LangFuse
 ### Usage
+
+Install LangFuse on OCI using terraform.
+For more info: https://langfuse.com/self-hosting/deployment/docker-compose
 
 ### Commands
 - starter.sh             : Show the menu
@@ -11,19 +14,14 @@
 - ...
                     
 ### Directories
-- src           : Sources files
-    - app       : Source of the Application
-        - db    : Database SQL files
-        - rest  : Backend - REST Application
-        - ui    : Frontend - User Interface
-    - terraform : Terraform scripts
-    - compute   : Contains the deployment files to Compute
-
-Help (Tutorial + How to customize): https://www.ocistarter.com/help
+- src              : Sources files
+    - app          : Source of the Application
+        - langfuse : LangFuse installation script
 
 ### Next Steps:
 - Edit the file terraform.tfvars. Some variables need to be filled:
 ```
+# Filter IP access to the LangFuse machine from Internet
 public_ip_filter="__TO_FILL__"
 ```
 
