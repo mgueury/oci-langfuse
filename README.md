@@ -2,6 +2,7 @@
 ### Usage
 
 Install LangFuse on OCI using terraform.
+
 For more info: https://langfuse.com/self-hosting/deployment/docker-compose
 
 ### Commands
